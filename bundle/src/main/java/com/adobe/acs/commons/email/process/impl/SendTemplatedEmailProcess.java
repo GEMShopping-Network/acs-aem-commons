@@ -19,6 +19,7 @@ package com.adobe.acs.commons.email.process.impl;
 
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -241,6 +242,18 @@ public class SendTemplatedEmailProcess implements WorkflowProcess {
     protected String[] getEmailAddrs(WorkItem workItem, Resource payloadResource, String[] args) {
         ResourceResolver resolver = payloadResource.getResourceResolver();
         String sendToUser = getValueFromArgs(Arguments.SEND_TO.getArgumentName(), args);
+        log.error("sendToUser: " + sendToUser);
+        if(sendToUser.equals("initiator")){
+            String[] emailList = new String[1];
+            
+            sendToUser = workItem.getWorkflowData().getMetaDataMap().get("userId", String.class);
+            
+            emailList[0] = sendToUser;
+            log.error("emailList: " + emailList.toString());
+            return emailList;
+
+        }
+        
         return SendTemplatedEmailUtils.getEmailAddrsFromPathOrName(resolver, sendToUser);
     }
 
